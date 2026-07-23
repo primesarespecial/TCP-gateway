@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/trader.dir/link.d CMakeFiles/trader.dir/client/trader_client.cpp.o -o trader  -luring
