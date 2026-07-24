@@ -5,7 +5,6 @@
 #include <iostream>
 
 TcpServer::TcpServer(int port) : port_(port) {
-    // Pre-allocate space for up to 10,000 concurrent file descriptors
     connections_.resize(20000); 
 }
 
