@@ -19,7 +19,5 @@ private:
     int port_;
     int listenFd_{-1};
     
-    // We use the file descriptor (int) as the index to achieve O(1) array lookups.
-    // This is vastly faster than a std::map or hash table.
     std::vector<std::unique_ptr<Connection>> connections_;
 };
