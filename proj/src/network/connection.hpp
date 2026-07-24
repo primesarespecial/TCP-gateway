@@ -11,11 +11,9 @@ public:
 
     int fd() const { return fd_; }
 
-    // State machine requests
     IoRequest recvReq;
     IoRequest sendReq;
 
-    // Pre-allocated buffers for zero-copy parsing
     Order orderBuffer{};
     GatewayResponse responseBuffer{};
 
