@@ -21,10 +21,9 @@ public:
     bool submitRecv(Connection* conn);
     bool submitSend(Connection* conn);
 
-    // Blocking wait for the first event
+    
     IoCompletion waitCompletion();
     
-    // Non-blocking peek to batch-reap the rest
     IoCompletion peekCompletion(); 
 
 private:
