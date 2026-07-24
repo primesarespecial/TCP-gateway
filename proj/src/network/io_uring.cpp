@@ -10,11 +10,10 @@ IoUring::~IoUring() {
 bool IoUring::initialize(unsigned entries) {
     io_uring_params params{};
     
-    // --- Activate SQPOLL (Zero-Syscall Mode) ---
     params.flags |= IORING_SETUP_SQPOLL;
-    params.sq_thread_idle = 2000; // The kernel thread will sleep if no traffic arrives for 2000ms
+    params.sq_thread_idle = 2000; 
 
-    // Use init_params instead of basic init
+    
     int ret = io_uring_queue_init_params(entries, &ring_, &params);
     if (ret < 0) {
         return false;
