@@ -1,6 +1,5 @@
 #pragma once
 
-// Forward declaration to prevent circular includes
 class Connection;
 
 struct IoRequest {
@@ -11,5 +10,5 @@ struct IoRequest {
     };
 
     Type type;
-    Connection* connection; // Pointer back to the client that owns this request
+    Connection* connection; 
 };
