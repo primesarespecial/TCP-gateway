@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 -march=native -Wall -Wextra -pthread -Wl,--dependency-file=CMakeFiles/gateway.dir/link.d CMakeFiles/gateway.dir/src/main.cpp.o CMakeFiles/gateway.dir/src/network/connection.cpp.o CMakeFiles/gateway.dir/src/network/io_uring.cpp.o CMakeFiles/gateway.dir/src/network/tcp_server.cpp.o CMakeFiles/gateway.dir/src/engine/strategy.cpp.o -o gateway  -luring

@@ -1,0 +1,4 @@
+/home/ranju/proj/build/CMakeFiles/gateway.dir
+/home/ranju/proj/build/CMakeFiles/benchmark_client.dir
+/home/ranju/proj/build/CMakeFiles/edit_cache.dir
+/home/ranju/proj/build/CMakeFiles/rebuild_cache.dir
