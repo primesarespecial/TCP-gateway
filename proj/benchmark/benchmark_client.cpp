@@ -36,7 +36,6 @@ void run_c10k_trader(int thread_id, int num_connections, int orders_per_conn, st
     server.sin_port = htons(9000);
     inet_pton(AF_INET, "127.0.0.1", &server.sin_addr);
 
-    // 1. Establish all connections for this thread
     for (int i = 0; i < num_connections; i++) {
         int sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if (sockfd < 0) continue;
@@ -64,7 +63,6 @@ void run_c10k_trader(int thread_id, int num_connections, int orders_per_conn, st
     Order order{0, 0, 1001, 100, 19050, Side::Buy};
     GatewayResponse response{};
 
-    // 2. Blast the server asynchronously
     for (int i = 0; i < orders_per_conn; i++) {
         uint64_t send_time = nowNs();
         order.timestampNs = send_time;
@@ -80,7 +78,6 @@ void run_c10k_trader(int thread_id, int num_connections, int orders_per_conn, st
             }
         }
 
-        // Spin-read until EVERY socket gets its response back
         for (int fd : sockets) {
             while (recv(fd, &response, sizeof(response), 0) < 0) {
                 if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -91,12 +88,10 @@ void run_c10k_trader(int thread_id, int num_connections, int orders_per_conn, st
             }
         }
         
-        // Record the average round-trip time for this specific batch of orders
         uint64_t batch_rtt = nowNs() - send_time;
         local_latencies.push_back(batch_rtt / sockets.size());
     }
 
-    // Safely merge this thread's latencies into the global list
     std::lock_guard<std::mutex> lock(mtx);
     all_latencies.insert(all_latencies.end(), local_latencies.begin(), local_latencies.end());
     
@@ -107,10 +102,10 @@ void run_c10k_trader(int thread_id, int num_connections, int orders_per_conn, st
 
 int main() {
     constexpr int NUM_THREADS = 4;       
-    constexpr int CONNS_PER_THREAD = 2500; // 10,000 Total Connections
+    constexpr int CONNS_PER_THREAD = 2500; 
     
-    // --- REDUCED FOR 2-MINUTE ENDURANCE RUN ---
-    constexpr int ORDERS_PER_CONN = 1200;  // 12,000,000 Total Orders
+    
+    constexpr int ORDERS_PER_CONN = 1200; 
     
     constexpr int TOTAL_ORDERS = NUM_THREADS * CONNS_PER_THREAD * ORDERS_PER_CONN;
 
@@ -143,7 +138,7 @@ int main() {
         return 1;
     }
 
-    // Sort the latencies to calculate percentiles
+    
     std::sort(all_latencies.begin(), all_latencies.end());
 
     uint64_t p50 = all_latencies[all_latencies.size() * 0.50];
@@ -151,10 +146,8 @@ int main() {
     uint64_t p99 = all_latencies[all_latencies.size() * 0.99];
     uint64_t p99_9 = all_latencies[all_latencies.size() * 0.999];
     
-    // --- ADDED MAX LATENCY ---
     uint64_t max_lat = all_latencies.back(); 
-
-    // Calculate total average
+    
     uint64_t total_sum = 0;
     for (uint64_t lat : all_latencies) total_sum += lat;
     uint64_t avg = total_sum / all_latencies.size();
