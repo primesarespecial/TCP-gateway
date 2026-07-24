@@ -1,12 +1,12 @@
-A low-latency, zero-syscall TCP gateway built in C++ for quantitative trading environments.
+A low-latency TCP gateway built in C++ for quantitative trading environments.
 
-Instead of relying on legacy `epoll` multiplexing, this project uses Linux `io_uring` with a dedicated kernel polling thread (`SQPOLL`). This architecture eliminates user-to-kernel context switches on the hot path, achieving constant-time O(1) network scaling.
+Instead of relying on legacy `epoll` multiplexing ($O(N)$ syscall overhead), this project uses Linux `io_uring` with a dedicated kernel polling thread (`SQPOLL`). This architecture drastically amortizes user-to-kernel context switches on the hot path, achieving near $O(1)$ network scaling under load.
 
 ## Core Architecture
 
 * **io_uring Subsystem:** Uses submission and completion queues (SQ/CQ) to batch network I/O operations asynchronously.
 
-* **Zero-Syscall Dispatch:** Configured with `IORING_SETUP_SQPOLL`. A dedicated kernel thread polls the user-space submission queue, meaning packets are read and dispatched without a single `read()` or `write()` syscall.
+* **Syscall Amortization (`SQPOLL`):** Configured with `IORING_SETUP_SQPOLL`. A dedicated kernel thread continuously polls the user-space submission queue. While under active load, packets are read and dispatched without the application invoking a single `read()`, `write()`, or `io_uring_enter()` system call.
 
 * **Lock-Free Concurrency:** Uses a custom Single-Producer Single-Consumer (SPSC) ring buffer. The network thread hands off parsed structs to the strategy engine using hardware-level atomics, avoiding `std::mutex` contention entirely.
 
