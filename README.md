@@ -6,7 +6,7 @@ Instead of relying on legacy `epoll` multiplexing ($O(N)$ syscall overhead), thi
 
 * **io_uring Subsystem:** Uses submission and completion queues (SQ/CQ) to batch network I/O operations asynchronously.
 
-* **Syscall Amortization (`SQPOLL`):** Configured with `IORING_SETUP_SQPOLL`. A dedicated kernel thread continuously polls the user-space submission queue. While under active load, packets are read and dispatched without the application invoking a single `read()`, `write()`, or `io_uring_enter()` system call.
+* **Syscall Amortization (`SQPOLL`):** Configured with `IORING_SETUP_SQPOLL`. A dedicated kernel thread continuously polls the user-space submission queue. While under active load, packets are read and dispatched without the application invoking a single `read()` or `write()` system call.
 
 * **Lock-Free Concurrency:** Uses a custom Single-Producer Single-Consumer (SPSC) ring buffer. The network thread hands off parsed structs to the strategy engine using hardware-level atomics, avoiding `std::mutex` contention entirely.
 
