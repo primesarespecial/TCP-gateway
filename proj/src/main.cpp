@@ -4,7 +4,7 @@
 #include <netinet/tcp.h>
 #include <emmintrin.h>
 #include <chrono>
-#include <pthread.h> // --- Added for Core Pinning ---
+#include <pthread.h> 
 
 #include "network/tcp_server.hpp"
 #include "network/io_uring.hpp"
@@ -17,7 +17,7 @@ inline uint64_t nowNs() {
     return duration_cast<nanoseconds>(steady_clock::now().time_since_epoch()).count();
 }
 
-// --- Helper function to lock a thread to a specific CPU core ---
+
 void pinThreadToCore(pthread_t thread, int core_id) {
     cpu_set_t cpuset;
     CPU_ZERO(&cpuset);
@@ -28,7 +28,7 @@ void pinThreadToCore(pthread_t thread, int core_id) {
 int main() {
     std::cout << "--- Starting High-Performance io_uring Gateway (Pinned) ---\n";
 
-    // Pin the Main Gateway (Network) Thread to Core 1
+    
     pinThreadToCore(pthread_self(), 1);
     std::cout << "[Gateway] Network thread pinned to CPU Core 1\n";
 
@@ -37,7 +37,7 @@ int main() {
     StrategyEngine engine;
     std::thread strategy_thread(&StrategyEngine::run, &engine, std::ref(inbound_queue));
 
-    // Pin the Strategy Thread to Core 2
+    
     pinThreadToCore(strategy_thread.native_handle(), 2);
     std::cout << "[Strategy] Engine thread pinned to CPU Core 2\n";
 
